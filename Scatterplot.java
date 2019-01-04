@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -28,8 +29,8 @@ import javax.swing.SwingUtilities;
  */
 public class Scatterplot extends JPanel {
 
-    private int width = 800;
-    private int heigth = 400;
+    private int width = 500;
+    private int heigth = 450;
     private int padding = 25;
     private int labelPadding = 25;
     private Color lineColor = new Color(44, 102, 230, 180);
@@ -39,6 +40,9 @@ public class Scatterplot extends JPanel {
     private int pointWidth = 4;
     private int numberYDivisions = 10;
     private List<Double> scores;
+    
+    public String xAixs;
+    public String yAixs;
 
    /* public Scatterplot() {
         this.scores = scores;
@@ -47,35 +51,63 @@ public class Scatterplot extends JPanel {
     	this.scores = scores;
     }
     
+	public Scatterplot(List<Double> scores, String xAixs, String yAixs) {
+    	this.scores = scores;
+    	this.xAixs = xAixs;
+    	this.yAixs = yAixs;
+    }
+	/*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
            public void run() {
               createAndShowGui();
            }
         });
-     }
+     }*/
     
-    public static void createAndShowGui() {
-        List<Double> scores = new ArrayList<>();
+    public void createAndShowGui(JPanel bontChartPanel, List<Double> scores, String xAixs, String yAixs) {
+	//public void createAndShowGui(JPanel bontChartPanel, List<BondData> csvBondDataList, String xAixs, String yAixs) {
+    	
+    	/*for(int i=1; i<csvBondDataList.size(); i++){
+    		if("YIELD".equals(xAixs)){
+    			csvBondDataList.get(i).getYield();
+    			
+    		} else if("DAYS_TO_MATURITY".equals(xAixs)){
+    			csvBondDataList.get(i).getDays_to_maturity();
+    			
+    		} else if("AMOUNT_CHF".equals(xAixs)){
+    			csvBondDataList.get(i).getAmount_chf();
+    			
+    		}
+    		
+    		if("YIELD".equals(yAixs)){
+    			csvBondDataList.get(i).getYield();
+    			
+    		} else if("DAYS_TO_MATURITY".equals(yAixs)){
+    			csvBondDataList.get(i).getDays_to_maturity();
+    			
+    		} else if("AMOUNT_CHF".equals(yAixs)){
+    			csvBondDataList.get(i).getAmount_chf();
+    			
+    		}
+    		
+    		csvBondDataList.get(i).getComment();
+    	}*/
+    	
+        
+    	scores = new ArrayList<>();
         Random random = new Random();
         int maxDataPoints = 40;
         int maxScore = 10;
+        
         for (int i = 0; i < maxDataPoints; i++) {
             scores.add((double) random.nextDouble() * maxScore);
-//            scores.add((double) i);
         }
-        Scatterplot mainPanel = new Scatterplot(scores);
-        mainPanel.setPreferredSize(new Dimension(800, 600));
-        JFrame frame = new JFrame("DrawGraph");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(mainPanel);
+        Scatterplot mainPanel = new Scatterplot(scores, xAixs, yAixs);
         
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        mainPanel.setPreferredSize(new Dimension(500, 450));
         
-        
-//        bontChartPanel.add(mainPanel);
+        bontChartPanel.add(mainPanel);
     }
 
     @Override

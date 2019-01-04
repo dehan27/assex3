@@ -6,7 +6,7 @@ public class BondData {
 	private String yield;
 	private String days_to_maturity;
 	private String amount_chf;
-	private String detail;
+	private String comment;
 	
 	public BondData(){
 		
@@ -18,7 +18,7 @@ public class BondData {
 		this.yield = yield;
 		this.days_to_maturity = days_to_maturity;
 		this.amount_chf = amount_chf;
-		this.detail = detail;
+		this.comment = comment;
 	}
 
 	public String getYield() {
@@ -45,12 +45,12 @@ public class BondData {
 		this.amount_chf = amount_chf;
 	}
 
-	public String getDetail() {
-		return detail;
+	public String getComment() {
+		return comment;
 	}
 
-	public void setDetail(String detail) {
-		this.detail = detail;
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public int getDataNo() {
