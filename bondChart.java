@@ -1,4 +1,4 @@
-package AssEX3;
+package AE3;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -70,8 +70,9 @@ class MyFrame extends JPanel implements ActionListener{
 		upperPanel.add(openBtn);
 		upperPanel.add(titleField);
 		upperPanel.add(quitBtn);
-		
 		lowerPanel.add(xAixsCombBx);
+
+		yAixsCombBx.setSelectedIndex(1);
 		lowerPanel.add(yAixsCombBx);
 		lowerPanel.add(commentField);
 		
@@ -147,18 +148,10 @@ class MyFrame extends JPanel implements ActionListener{
 					
 					System.out.println("csvBondDataList.size() : " + csvBondDataList.size());
 					
-					for(int j=0; j<csvBondDataList.size(); j++){
-						System.out.println("csvBondDataList.get(j).getYield() : " + csvBondDataList.get(0).getYield());
-						System.out.println("csvBondDataList.get(j).getYield() : " + csvBondDataList.get(0).getAmount_chf());
-						System.out.println("csvBondDataList.get(j).getYield() : " + csvBondDataList.get(0).getDays_to_maturity());
-						
-					}
-					
 					br.close();
-					List<Double> scores = null;
-					Scatterplot scatterplot = new Scatterplot(scores, (String)xAixsCombBx.getSelectedItem(), (String)yAixsCombBx.getSelectedItem());
+					Scatterplot scatterplot = new Scatterplot();
 					
-					scatterplot.createAndShowGui(bontChartPanel, scores, (String)xAixsCombBx.getSelectedItem(), (String)yAixsCombBx.getSelectedItem());
+					scatterplot.createAndShowGui(bontChartPanel, csvBondDataList, (String)xAixsCombBx.getSelectedItem(), (String)yAixsCombBx.getSelectedItem());
 					frame.setVisible(true);
 					
 				} catch (IOException ex) {

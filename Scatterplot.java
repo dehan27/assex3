@@ -1,4 +1,4 @@
-package AssEX3;
+package AE3;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -33,77 +33,85 @@ public class Scatterplot extends JPanel {
     private int heigth = 450;
     private int padding = 25;
     private int labelPadding = 25;
-    private Color lineColor = new Color(44, 102, 230, 180);
-    private Color pointColor = new Color(100, 100, 100, 180);
+    private Color pointColor = new Color(255, 0, 0, 180);
     private Color gridColor = new Color(200, 200, 200, 200);
-    private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
     private int pointWidth = 4;
     private int numberYDivisions = 10;
+    private int numberXDivisions = 10;
     private List<Double> scores;
-    
-    public String xAixs;
-    public String yAixs;
+	
+	private ArrayList<Double> selectedXaxis = new ArrayList<Double>();
+	private ArrayList<Double> selectedYaxis = new ArrayList<Double>();
+	private int maxXaxisValue = 0;
+	private int minXaxisValue = 0;
+	private int maxYaxisValue = 0;
+	private int minYaxisValue = 0;
+	private List<BondData> csvBondDataList = new ArrayList<BondData>();
+	
+	private String xAxisTitle = "";
+	private String yAxisTitle = "";
 
-   /* public Scatterplot() {
-        this.scores = scores;
-    }*/
-    public Scatterplot(List<Double> scores) {
-    	this.scores = scores;
+    public Scatterplot() {
+    	
     }
     
-	public Scatterplot(List<Double> scores, String xAixs, String yAixs) {
-    	this.scores = scores;
-    	this.xAixs = xAixs;
-    	this.yAixs = yAixs;
+    public Scatterplot(List<BondData> csvBondDataList, ArrayList<Double> selectedXaxis, ArrayList<Double> selectedYaxis, int maxXaxisValue, int minXaxisValue, int maxYaxisValue, int minYaxisValue) {
+    	this.csvBondDataList = csvBondDataList;
+    	this.selectedXaxis = selectedXaxis;
+    	this.selectedYaxis = selectedYaxis;
+    	this.maxXaxisValue = maxXaxisValue;
+    	this.minXaxisValue = minXaxisValue;
+    	this.maxYaxisValue = maxYaxisValue;
+    	this.minYaxisValue = minYaxisValue;
     }
-	/*
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-           public void run() {
-              createAndShowGui();
-           }
-        });
-     }*/
     
-    public void createAndShowGui(JPanel bontChartPanel, List<Double> scores, String xAixs, String yAixs) {
-	//public void createAndShowGui(JPanel bontChartPanel, List<BondData> csvBondDataList, String xAixs, String yAixs) {
-    	
-    	/*for(int i=1; i<csvBondDataList.size(); i++){
-    		if("YIELD".equals(xAixs)){
-    			csvBondDataList.get(i).getYield();
+    
+//    public void createAndShowGui(JPanel bontChartPanel, List<Double> scores, String xAxis, String yAxis) {
+	public void createAndShowGui(JPanel bontChartPanel, List<BondData> csvBondDataList, String xAxisTitle, String yAxisTitle) {
+		//set into global variable
+		this.xAxisTitle = xAxisTitle;
+		this.yAxisTitle = yAxisTitle;
+		this.csvBondDataList = csvBondDataList;
+		
+		//csvBondDataList.get(0) is column title
+    	for(int i=1; i<this.csvBondDataList.size(); i++){
+    		//set xAxis
+    		if("YIELD".equals(xAxisTitle)){
+    			this.selectedXaxis.add(Double.parseDouble(csvBondDataList.get(i).getYield()));
     			
-    		} else if("DAYS_TO_MATURITY".equals(xAixs)){
-    			csvBondDataList.get(i).getDays_to_maturity();
+    		} else if("DAYS_TO_MATURITY".equals(xAxisTitle)){
+    			this.selectedXaxis.add(Double.parseDouble(csvBondDataList.get(i).getDays_to_maturity()));
     			
-    		} else if("AMOUNT_CHF".equals(xAixs)){
-    			csvBondDataList.get(i).getAmount_chf();
-    			
+    		} else if("AMOUNT_CHF".equals(xAxisTitle)){
+    			this.selectedXaxis.add(Double.parseDouble(csvBondDataList.get(i).getAmount_chf()));
     		}
     		
-    		if("YIELD".equals(yAixs)){
-    			csvBondDataList.get(i).getYield();
+    		//set yAxis
+    		if("YIELD".equals(yAxisTitle)){
+    			this.selectedYaxis.add(Double.parseDouble(csvBondDataList.get(i).getYield()));
     			
-    		} else if("DAYS_TO_MATURITY".equals(yAixs)){
-    			csvBondDataList.get(i).getDays_to_maturity();
+    		} else if("DAYS_TO_MATURITY".equals(yAxisTitle)){
+    			this.selectedYaxis.add(Double.parseDouble(csvBondDataList.get(i).getDays_to_maturity()));
     			
-    		} else if("AMOUNT_CHF".equals(yAixs)){
-    			csvBondDataList.get(i).getAmount_chf();
-    			
+    		} else if("AMOUNT_CHF".equals(yAxisTitle)){
+    			this.selectedYaxis.add(Double.parseDouble(csvBondDataList.get(i).getAmount_chf()));
     		}
-    		
-    		csvBondDataList.get(i).getComment();
-    	}*/
+    	}
+    	
+    	this.maxXaxisValue = (int) getMaxValue(selectedXaxis);
+    	this.minXaxisValue = (int) getMinValue(selectedXaxis);
+    	this.maxYaxisValue = (int) getMaxValue(selectedYaxis);
+    	this.minYaxisValue = (int) getMinValue(selectedYaxis);
+    	
+    	System.out.println("maxXaxisValue : " + this.maxXaxisValue);
+    	System.out.println("minXaxisValue : " + this.minXaxisValue);
+    	System.out.println("maxYaxisValue : " + this.maxYaxisValue);
+    	System.out.println("minYaxisValue : " + this.minYaxisValue);
     	
         
-    	scores = new ArrayList<>();
-        Random random = new Random();
-        int maxDataPoints = 40;
-        int maxScore = 10;
-        
-        for (int i = 0; i < maxDataPoints; i++) {
-            scores.add((double) random.nextDouble() * maxScore);
-        }
-        Scatterplot mainPanel = new Scatterplot(scores, xAixs, yAixs);
+        //scores, xAxis, yAxis
+//        Scatterplot mainPanel = new Scatterplot();
+        Scatterplot mainPanel = new Scatterplot(this.csvBondDataList, selectedXaxis,  selectedYaxis, maxXaxisValue, minXaxisValue, maxYaxisValue, minYaxisValue);
         
         mainPanel.setPreferredSize(new Dimension(500, 450));
         
@@ -116,13 +124,24 @@ public class Scatterplot extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (scores.size() - 1);
-        double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (getMaxScore() - getMinScore());
-
+        double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (maxXaxisValue - minXaxisValue);
+        double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (maxYaxisValue - minYaxisValue);
+        
+        System.out.println("paintComponent() xScale : " + xScale);
+        System.out.println("paintComponent() yScale : " + yScale);
+        
         List<Point> graphPoints = new ArrayList<>();
-        for (int i = 0; i < scores.size(); i++) {
-            int x1 = (int) (i * xScale + padding + labelPadding);
-            int y1 = (int) ((getMaxScore() - scores.get(i)) * yScale + padding);
+        System.out.println("line 134 csvBondDataList.size() : " + csvBondDataList.size());
+        for (int i = 0; i < selectedXaxis.size(); i++) {
+//            int x1 = (int) (i * xScale + padding + labelPadding);
+//            int y1 = (int) ((getMaxScore() - scores.get(i)) * yScale + padding);
+            
+//        	int x1 = selectedXaxis.get(i).intValue();
+//            int y1 =selectedYaxis.get(i).intValue();
+        	int x1 = (int) ((maxXaxisValue - selectedXaxis.get(i).intValue()) * xScale + padding);
+            int y1 = (int) ((maxYaxisValue - selectedYaxis.get(i).intValue()) * yScale + padding);
+            System.out.println("graphPoints x"+i+" : "+ x1);
+            System.out.println("graphPoints y"+i+" : "+ y1);
             graphPoints.add(new Point(x1, y1));
         }
 
@@ -137,18 +156,44 @@ public class Scatterplot extends JPanel {
             int x1 = pointWidth + padding + labelPadding;
             int y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
             int y1 = y0;
-            if (scores.size() > 0) {
+            System.out.println(i + "|| x0 " + x0  + "|| x1 " +  x1  + "|| y0 " +  y0  + "|| y1 " + y1);
+            if (selectedYaxis.size() > 0) {
                 g2.setColor(gridColor);
                 g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
                 g2.setColor(Color.BLACK);
-                String yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
+//                String yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
+                String yLabel = ((int) ((minYaxisValue + (maxYaxisValue - maxYaxisValue) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
                 FontMetrics metrics = g2.getFontMetrics();
                 int labelWidth = metrics.stringWidth(yLabel);
                 g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
+                System.out.println(yLabel + "|| x0 - labelWidth - 5 : "+(x0 - labelWidth - 5) + "|| y0 + (metrics.getHeight() / 2) - 3 : " + ( y0 + (metrics.getHeight() / 2) - 3)+"\n");
             }
             g2.drawLine(x0, y0, x1, y1);
         }
+        
+        
+        // and for x axis
+        for (int i = 0; i < numberXDivisions + 1; i++) {
+        	int x0 = i * (getWidth() - padding * 2 - labelPadding) / (selectedXaxis.size() - 1) + padding + labelPadding;
+            int x1 = x0;
+            int y0 = getHeight() - padding - labelPadding;
+            int y1 = y0 - pointWidth;
+        	if (selectedXaxis.size() > 0) {
+        		g2.setColor(gridColor);
+//        		g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
+        		g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
+        		g2.setColor(Color.BLACK);
+//                String yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
+        		String xLabel = ((int) ((minXaxisValue + (maxXaxisValue - maxXaxisValue) * ((i * 1.0) / numberXDivisions)) * 100)) / 100.0 + "";
+        		FontMetrics metrics = g2.getFontMetrics();
+        		int labelWidth = metrics.stringWidth(xLabel);
+//        		g2.drawString(xLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
+        		g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
+        	}
+        	g2.drawLine(x0, y0, x1, y1);
+        }
 
+        /*
         // and for x axis
         for (int i = 0; i < scores.size(); i++) {
             if (scores.size() > 1) {
@@ -167,24 +212,12 @@ public class Scatterplot extends JPanel {
                 }
                 g2.drawLine(x0, y0, x1, y1);
             }
-        }
-
+        }*/
+        
         // create x and y axes 
         g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, padding + labelPadding, padding);
         g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, getWidth() - padding, getHeight() - padding - labelPadding);
 
-        Stroke oldStroke = g2.getStroke();
-        g2.setColor(lineColor);
-        g2.setStroke(GRAPH_STROKE);
-        for (int i = 0; i < graphPoints.size() - 1; i++) {
-            int x1 = graphPoints.get(i).x;
-            int y1 = graphPoints.get(i).y;
-            int x2 = graphPoints.get(i + 1).x;
-            int y2 = graphPoints.get(i + 1).y;
-            g2.drawLine(x1, y1, x2, y2);
-        }
-
-        g2.setStroke(oldStroke);
         g2.setColor(pointColor);
         for (int i = 0; i < graphPoints.size(); i++) {
             int x = graphPoints.get(i).x - pointWidth / 2;
@@ -194,32 +227,65 @@ public class Scatterplot extends JPanel {
             g2.fillOval(x, y, ovalW, ovalH);
         }
     }
-
-    private double getMinScore() {
-        double minScore = Double.MAX_VALUE;
-        for (Double score : scores) {
-            minScore = Math.min(minScore, score);
-        }
-        return minScore;
+    
+    
+    private double getMaxValue(ArrayList<Double> list) {
+    	double maxValue = Double.MIN_VALUE;
+    	for (Double value : list) {
+    		maxValue = Math.max(maxValue, value);
+    	}
+    	return maxValue;
+    }
+    
+    private double getMinValue(ArrayList<Double> list) {
+    	double minValue = Double.MAX_VALUE;
+    	for (Double value : list) {
+    		minValue = Math.min(minValue, value);
+    	}
+    	return minValue;
+    }
+    
+    private int getXaxisMaxValue() {
+    	return maxXaxisValue;
+    	//return (int)getMaxValue(selectedXaxis);
+    }
+    
+    private int getXaxisMinValue() {
+    	return minXaxisValue;
+    	//return (int)getMinValue(selectedXaxis);
+    }
+    
+    private int getYaxisMaxValue() {
+    	return maxYaxisValue;
+    	//return (int)getMaxValue(selectedYaxis);
+    }
+    
+    private int getYaxisMinValue() {
+    	return minYaxisValue;
+//    	return (int)getMinValue(selectedYaxis);
     }
 
-    private double getMaxScore() {
-        double maxScore = Double.MIN_VALUE;
-        for (Double score : scores) {
-            maxScore = Math.max(maxScore, score);
-        }
-        return maxScore;
-    }
-
-    public void setScores(List<Double> scores) {
-        this.scores = scores;
-        invalidate();
-        this.repaint();
-    }
-
-    public List<Double> getScores() {
-        return scores;
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 
 }
