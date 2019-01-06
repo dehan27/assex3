@@ -1,6 +1,5 @@
 package AE3;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -8,15 +7,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 
 /*
@@ -29,8 +23,8 @@ import javax.swing.SwingUtilities;
  */
 public class Scatterplot extends JPanel {
 
-    private int width = 500;
-    private int heigth = 450;
+    private int width = 550;
+    private int heigth = 650;
     private int padding = 25;
     private int labelPadding = 25;
     private Color pointColor = new Color(255, 0, 0, 180);
@@ -38,7 +32,6 @@ public class Scatterplot extends JPanel {
     private int pointWidth = 4;
     private int numberYDivisions = 15;
     private int numberXDivisions = 15;
-    private List<Double> scores;
 	
 	private ArrayList<Double> selectedXaxis = new ArrayList<Double>();
 	private ArrayList<Double> selectedYaxis = new ArrayList<Double>();
@@ -66,8 +59,8 @@ public class Scatterplot extends JPanel {
     }
     
     
-//    public void createAndShowGui(JPanel bontChartPanel, List<Double> scores, String xAxis, String yAxis) {
-	public void createAndShowGui(JPanel bontChartPanel, List<BondData> csvBondDataList, String xAxisTitle, String yAxisTitle) {
+//    public void createAndShowGui(JPanel bondChartPanel, List<Double> scores, String xAxis, String yAxis) {
+	public void createAndShowGui(JPanel bondChartPanel, List<BondData> csvBondDataList, String xAxisTitle, String yAxisTitle) {
 		//set into global variable
 		this.xAxisTitle = xAxisTitle;
 		this.yAxisTitle = yAxisTitle;
@@ -107,15 +100,10 @@ public class Scatterplot extends JPanel {
     	System.out.println("minXaxisValue : " + this.minXaxisValue);
     	System.out.println("maxYaxisValue : " + this.maxYaxisValue);
     	System.out.println("minYaxisValue : " + this.minYaxisValue);
-    	
         
-        //scores, xAxis, yAxis
-//        Scatterplot mainPanel = new Scatterplot();
         Scatterplot mainPanel = new Scatterplot(this.csvBondDataList, selectedXaxis,  selectedYaxis, maxXaxisValue, minXaxisValue, maxYaxisValue, minYaxisValue);
-        
-        mainPanel.setPreferredSize(new Dimension(500, 450));
-        
-        bontChartPanel.add(mainPanel);
+        mainPanel.setPreferredSize(new Dimension(width, heigth));
+        bondChartPanel.add(mainPanel);
     }
 
     @Override
@@ -145,8 +133,28 @@ public class Scatterplot extends JPanel {
         g2.fillRect(padding + labelPadding, padding, getWidth() - (2 * padding) - labelPadding, getHeight() - 2 * padding - labelPadding);
         g2.setColor(Color.BLACK);
 
+        // create hatch marks and grid lines for x axis.
+        for (int i = 0; i < numberXDivisions+1; i++) {
+        	int x0 = i * (getWidth() - padding * 2 - labelPadding) / (numberXDivisions - 1) + padding + labelPadding;
+            int x1 = x0;
+            int y0 = getHeight() - padding - labelPadding;
+            int y1 = y0 - pointWidth;
+            System.out.println(i+ "_x0  :  " + x0);
+        	if (selectedXaxis.size() > 0) {
+        		g2.setColor(gridColor);
+        		g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);//draw guide line
+        		
+        		g2.setColor(Color.BLACK);
+        		String xLabel = ((int) ((minXaxisValue + (maxXaxisValue - minXaxisValue) * ((i * 1.0) / numberXDivisions)) * 100)) / 100.0 + "";
+        		FontMetrics metrics = g2.getFontMetrics();
+        		int labelWidth = metrics.stringWidth(xLabel);
+        		g2.drawString(xLabel, x0 - labelWidth/2, y0 + metrics.getHeight() + 3); //draw axis interval values
+        	}
+        	g2.drawLine(x0, y0, x1, y1);
+        }
+        
         // create hatch marks and grid lines for y axis.
-        for (int i = 0; i < numberYDivisions + 1; i++) {
+        for (int i = 0; i < numberYDivisions+1; i++) {
             int x0 = padding + labelPadding;
             int x1 = pointWidth + padding + labelPadding;
             int y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
@@ -163,53 +171,9 @@ public class Scatterplot extends JPanel {
             g2.drawLine(x0, y0, x1, y1);
         }
         
-        
-        // and for x axis
-        for (int i = 0; i < numberXDivisions+1; i++) {
-        	int x0 = i * (getWidth() - padding * 2 - labelPadding) / (numberXDivisions - 1) + padding + labelPadding;
-            int x1 = x0;
-            int y0 = getHeight() - padding - labelPadding;
-            int y1 = y0 - pointWidth;
-            System.out.println(i + "|| x0 " + x0  + "|| x1 " +  x1  + "|| y0 " +  y0  + "|| y1 " + y1);
-        	if (selectedXaxis.size() > 0) {
-        		g2.setColor(gridColor);
-        		g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
-        		g2.setColor(Color.BLACK);
-        		String xLabel = ((int) ((minXaxisValue + (maxXaxisValue - minXaxisValue) * ((i * 1.0) / numberXDivisions)) * 100)) / 100.0 + "";
-        		FontMetrics metrics = g2.getFontMetrics();
-        		
-        		int labelWidth = metrics.stringWidth(xLabel);
-        		g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3); //draw interval values
-        		
-        		System.out.println("yLabel : " + xLabel + "|| x0 - labelWidth - 5 : "+(x0 - labelWidth - 5) + "|| y0 + (metrics.getHeight() / 2) - 3 : " + ( y0 + (metrics.getHeight() / 2) - 3)+"\n");
-        	}
-        	g2.drawLine(x0, y0, x1, y1);
-        }
-
-        
-/*        // and for x axis
-        for (int i = 0; i < numberXDivisions; i++) {
-            if (selectedXaxis.size() > 1) {
-                int x0 = i * (getWidth() - padding * 2 - labelPadding) / (selectedXaxis.size() - 1) + padding + labelPadding;
-                int x1 = x0;
-                int y0 = getHeight() - padding - labelPadding;
-                int y1 = y0 - pointWidth;
-                if ((i % ((int) ((selectedXaxis.size() / 20.0)) + 1)) == 0) {
-                    g2.setColor(gridColor);
-                    g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
-                    g2.setColor(Color.BLACK);
-                    String xLabel = i + "";
-                    FontMetrics metrics = g2.getFontMetrics();
-                    int labelWidth = metrics.stringWidth(xLabel);
-                    g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
-                }
-                g2.drawLine(x0, y0, x1, y1);
-            }
-        }*/
-        
         // create x and y axes 
-        g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, padding + labelPadding, padding);
         g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, getWidth() - padding, getHeight() - padding - labelPadding);
+        g2.drawLine(padding + labelPadding, getHeight() - padding - labelPadding, padding + labelPadding, padding);
 
         g2.setColor(pointColor);
         for (int i = 0; i < graphPoints.size(); i++) {
