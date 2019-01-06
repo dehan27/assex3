@@ -135,8 +135,8 @@ public class Scatterplot extends JPanel {
         for (int i = 0; i < selectedXaxis.size(); i++) {
         	int x1 = (int) ((maxXaxisValue - selectedXaxis.get(i).intValue()) * xScale + padding);
             int y1 = (int) ((maxYaxisValue - selectedYaxis.get(i).intValue()) * yScale + padding);
-            System.out.println("graphPoints x"+i+" : "+ x1);
-            System.out.println("graphPoints y"+i+" : "+ y1);
+//            System.out.println("graphPoints x"+i+" : "+ x1);
+//            System.out.println("graphPoints y"+i+" : "+ y1);
             graphPoints.add(new Point(x1, y1));
         }
 
@@ -166,7 +166,6 @@ public class Scatterplot extends JPanel {
         
         // and for x axis
         for (int i = 0; i < numberXDivisions+1; i++) {
-//        	int x0 = i * (getWidth() - padding * 2 - labelPadding) / (selectedXaxis.size() - 1) + padding + labelPadding;
         	int x0 = i * (getWidth() - padding * 2 - labelPadding) / (numberXDivisions - 1) + padding + labelPadding;
             int x1 = x0;
             int y0 = getHeight() - padding - labelPadding;
@@ -174,15 +173,14 @@ public class Scatterplot extends JPanel {
             System.out.println(i + "|| x0 " + x0  + "|| x1 " +  x1  + "|| y0 " +  y0  + "|| y1 " + y1);
         	if (selectedXaxis.size() > 0) {
         		g2.setColor(gridColor);
-//        		g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
-        		g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
         		g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
         		g2.setColor(Color.BLACK);
         		String xLabel = ((int) ((minXaxisValue + (maxXaxisValue - minXaxisValue) * ((i * 1.0) / numberXDivisions)) * 100)) / 100.0 + "";
         		FontMetrics metrics = g2.getFontMetrics();
+        		
         		int labelWidth = metrics.stringWidth(xLabel);
-//        		g2.drawString(xLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
-        		g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
+        		g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3); //draw interval values
+        		
         		System.out.println("yLabel : " + xLabel + "|| x0 - labelWidth - 5 : "+(x0 - labelWidth - 5) + "|| y0 + (metrics.getHeight() / 2) - 3 : " + ( y0 + (metrics.getHeight() / 2) - 3)+"\n");
         	}
         	g2.drawLine(x0, y0, x1, y1);
