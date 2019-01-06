@@ -28,7 +28,7 @@ public class Scatterplot extends JPanel {
     private int padding = 25;
     private int labelPadding = 25;
     private Color pointColor = new Color(255, 0, 0, 180);
-    private Color gridColor = new Color(200, 200, 200, 200);
+    private Color guideLineColor = new Color(200, 200, 200, 200);
     private int pointWidth = 4;
     private int numberYDivisions = 15;
     private int numberXDivisions = 15;
@@ -96,16 +96,40 @@ public class Scatterplot extends JPanel {
     	this.maxYaxisValue = (int) getMaxValue(selectedYaxis);
     	this.minYaxisValue = (int) getMinValue(selectedYaxis);
     	
-    	System.out.println("maxXaxisValue : " + this.maxXaxisValue);
-    	System.out.println("minXaxisValue : " + this.minXaxisValue);
-    	System.out.println("maxYaxisValue : " + this.maxYaxisValue);
-    	System.out.println("minYaxisValue : " + this.minYaxisValue);
+//    	System.out.println("maxXaxisValue : " + this.maxXaxisValue);
+//    	System.out.println("minXaxisValue : " + this.minXaxisValue);
+//    	System.out.println("maxYaxisValue : " + this.maxYaxisValue);
+//    	System.out.println("minYaxisValue : " + this.minYaxisValue);
         
         Scatterplot mainPanel = new Scatterplot(this.csvBondDataList, selectedXaxis,  selectedYaxis, maxXaxisValue, minXaxisValue, maxYaxisValue, minYaxisValue);
         mainPanel.setPreferredSize(new Dimension(width, heigth));
         bondChartPanel.add(mainPanel);
     }
 
+	
+	class myPoint {
+		
+		public myPoint(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
+		private double x;
+		private double y;
+		public double getX() {
+			return x;
+		}
+		public void setX(double x) {
+			this.x = x;
+		}
+		public double getY() {
+			return y;
+		}
+		public void setY(double y) {
+			this.y = y;
+		}
+		
+		
+	}
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -115,17 +139,21 @@ public class Scatterplot extends JPanel {
         double xScale = ((double) getWidth() - (2 * padding) - labelPadding) / (maxXaxisValue - minXaxisValue);
         double yScale = ((double) getHeight() - 2 * padding - labelPadding) / (maxYaxisValue - minYaxisValue);
         
-        System.out.println("paintComponent() xScale : " + xScale);
-        System.out.println("paintComponent() yScale : " + yScale);
+//        System.out.println("paintComponent() xScale : " + xScale);
+//        System.out.println("paintComponent() yScale : " + yScale);
         
         List<Point> graphPoints = new ArrayList<>();
-        System.out.println("line 134 csvBondDataList.size() : " + csvBondDataList.size());
+//        List<myPoint> graphPoints = new ArrayList<>();
+//        System.out.println("line 134 csvBondDataList.size() : " + csvBondDataList.size());
         for (int i = 0; i < selectedXaxis.size(); i++) {
-        	int x1 = (int) ((maxXaxisValue - selectedXaxis.get(i).intValue()) * xScale + padding);
+//        	double x1 = ((maxXaxisValue - selectedXaxis.get(i).intValue()) * xScale + padding);
+//        	double y1 = ((maxYaxisValue - selectedYaxis.get(i).intValue()) * yScale + padding);
+            int x1 = (int) ((maxXaxisValue - selectedXaxis.get(i).intValue()) * xScale + padding);
             int y1 = (int) ((maxYaxisValue - selectedYaxis.get(i).intValue()) * yScale + padding);
-//            System.out.println("graphPoints x"+i+" : "+ x1);
-//            System.out.println("graphPoints y"+i+" : "+ y1);
+            System.out.println("graphPoints x"+i+" : "+ x1);
+            System.out.println("graphPoints y"+i+" : "+ y1);
             graphPoints.add(new Point(x1, y1));
+//            graphPoints.add(new myPoint1(x1, y1));
         }
 
         // draw white background
@@ -139,9 +167,9 @@ public class Scatterplot extends JPanel {
             int x1 = x0;
             int y0 = getHeight() - padding - labelPadding;
             int y1 = y0 - pointWidth;
-            System.out.println(i+ "_x0  :  " + x0);
+//            System.out.println(i+ "_x0  :  " + x0);
         	if (selectedXaxis.size() > 0) {
-        		g2.setColor(gridColor);
+        		g2.setColor(guideLineColor);
         		g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);//draw guide line
         		
         		g2.setColor(Color.BLACK);
@@ -160,7 +188,7 @@ public class Scatterplot extends JPanel {
             int y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
             int y1 = y0;
             if (selectedYaxis.size() > 0) {
-                g2.setColor(gridColor);
+                g2.setColor(guideLineColor);
                 g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
                 g2.setColor(Color.BLACK);
                 String yLabel = ((int) ((minYaxisValue + (maxYaxisValue - minYaxisValue) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
@@ -179,6 +207,8 @@ public class Scatterplot extends JPanel {
         for (int i = 0; i < graphPoints.size(); i++) {
             int x = graphPoints.get(i).x - pointWidth / 2;
             int y = graphPoints.get(i).y - pointWidth / 2;
+//            int x = graphPoints.get(i).x - pointWidth / 2;
+//            int y = graphPoints.get(i).y - pointWidth / 2;
             int ovalW = pointWidth;
             int ovalH = pointWidth;
             g2.fillOval(x, y, ovalW, ovalH);

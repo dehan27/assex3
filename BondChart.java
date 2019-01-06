@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -57,83 +60,73 @@ class BondChart extends JPanel implements ActionListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {}
 		};
-
 			
-			//set combobox actionListner
-			btnActionListener = new ActionListener() {//add actionlistner to listen for change
-	            @Override
-	            public void actionPerformed(ActionEvent e) {
-	            	
+		//set button actionListner
+		btnActionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-	        		Object obj = e.getSource();    
-	        		
-	        		if((JButton)obj == openBtn){
-	        			
-	        			JFileChooser chooser = new JFileChooser();
-	        			FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv file only", "csv");
-	        			
-	        			chooser.addChoosableFileFilter(filter);
-	        			chooser.setFileFilter(filter);
-	        			
-	        			//get current directory
-	        			File getPath = new File(".");
-	        			String currentPath = getPath.getAbsolutePath();
-	        			
-	        			chooser.setCurrentDirectory(new File(currentPath));
-	        			int ret = chooser.showDialog(null, "Choose file");
-	        			if(ret!=JFileChooser.APPROVE_OPTION){
-	        				JOptionPane.showMessageDialog(null, "A file is not chosen", "alert", JOptionPane.WARNING_MESSAGE);
-	        				return;
-	        			} else if (ret == JFileChooser.APPROVE_OPTION){
-	        				File file = chooser.getSelectedFile();
-	        				file.getAbsoluteFile();
-	        				
-	        				
-	        				csvBondDataList = new ArrayList<BondData>();
-	        				try {
-	        					BufferedReader br = new BufferedReader(new FileReader(file));
-	        					ArrayList<String[]> bondArr = new ArrayList<String[]>();
-	        					
-	        					
-	        					String line = "";
-	        					int i = 0;
-	        					while((line = br.readLine()) != null){
-	        						
-	        						String[] lineData = line.split(",");
-	        						bondArr.add(lineData);
-	        						
-	        						BondData bondData = new BondData(i ,line.split(",")[0], line.split(",")[1], line.split(",")[2], "");
-	        						csvBondDataList.add(bondData);
-	        						i++;
-	        					}
-	        					
-	        					System.out.println("csvBondDataList.size() : " + csvBondDataList.size());
-	        					
-	        					br.close();
-	        					/*Scatterplot scatterplot = new Scatterplot();
-	        					
-	        					scatterplot.createAndShowGui(bondChartPanel, csvBondDataList, (String)xAixsCombBx.getSelectedItem(), (String)yAixsCombBx.getSelectedItem());
-	        					frame.setVisible(true);*/
-	        					
-	        					createScatterplot();
-	        					
-	        				} catch (IOException ex) {
-	        					ex.printStackTrace();
-	        				}
-	        				
-	        			}
-	        			
-	        			String filePath = chooser.getSelectedFile().getPath();
-	        			String fileName = chooser.getSelectedFile().getName();
-	        			
-	        			titleField.setText(fileName);
-	        			
-	        		} else if((JButton)obj == quitBtn){
-	        			frame.dispose();
-	        		} 
-	            	
-	    		}
-	        };
+        		Object obj = e.getSource();    
+        		
+        		if((JButton)obj == openBtn){
+        			
+        			JFileChooser chooser = new JFileChooser();
+        			FileNameExtensionFilter filter = new FileNameExtensionFilter(".csv file only", "csv");
+        			
+        			chooser.addChoosableFileFilter(filter);
+        			chooser.setFileFilter(filter);
+        			
+        			//get current directory
+        			File getPath = new File(".");
+        			String currentPath = getPath.getAbsolutePath();
+        			
+        			chooser.setCurrentDirectory(new File(currentPath));
+        			int ret = chooser.showDialog(null, "Choose file");
+        			if(ret!=JFileChooser.APPROVE_OPTION){
+        				JOptionPane.showMessageDialog(null, "A file is not chosen", "alert", JOptionPane.WARNING_MESSAGE);
+        				return;
+        			} else if (ret == JFileChooser.APPROVE_OPTION){
+        				File file = chooser.getSelectedFile();
+        				file.getAbsoluteFile();
+        				
+        				
+        				csvBondDataList = new ArrayList<BondData>();
+        				try {
+        					BufferedReader br = new BufferedReader(new FileReader(file));
+        					ArrayList<String[]> bondArr = new ArrayList<String[]>();
+        					
+        					
+        					String line = "";
+        					int i = 0;
+        					while((line = br.readLine()) != null){
+        						
+        						String[] lineData = line.split(",");
+        						bondArr.add(lineData);
+        						
+        						BondData bondData = new BondData(i ,line.split(",")[0], line.split(",")[1], line.split(",")[2], "");
+        						csvBondDataList.add(bondData);
+        						i++;
+        					}
+        					
+        					System.out.println("csvBondDataList.size() : " + csvBondDataList.size());
+        					
+        					br.close();
+        					createScatterplot();
+        					
+        				} catch (IOException ex) {
+        					ex.printStackTrace();
+        				}
+        				
+        			}
+        			String fileName = chooser.getSelectedFile().getName();
+        			titleField.setText(fileName);
+        			
+        		} else if((JButton)obj == quitBtn){
+        			frame.dispose();
+        		} 
+            	
+    		}
+        };
 	        
         openBtn.addActionListener(btnActionListener);
 		quitBtn.addActionListener(btnActionListener);
@@ -153,11 +146,51 @@ class BondChart extends JPanel implements ActionListener{
 		
 		container.add(upperPanel,BorderLayout.NORTH);
 		container.add(bondChartPanel,BorderLayout.CENTER);
+		bondChartPanel.addMouseListener(new MyMouseListner());
 		container.add(lowerPanel,BorderLayout.SOUTH);
 		
 		frame.setSize(700, 800);
 		
 		frame.setVisible(true);
+		
+	}
+	
+
+	class MyMouseListner implements MouseListener {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+//			System.out.println("you clicked ("+ e.get+" "+""+")");
+			System.out.println(e.getPoint());
+			System.out.println(e.getComponent());
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 		
 	}
 	
