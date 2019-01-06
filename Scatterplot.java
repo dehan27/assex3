@@ -36,8 +36,8 @@ public class Scatterplot extends JPanel {
     private Color pointColor = new Color(255, 0, 0, 180);
     private Color gridColor = new Color(200, 200, 200, 200);
     private int pointWidth = 4;
-    private int numberYDivisions = 10;
-    private int numberXDivisions = 10;
+    private int numberYDivisions = 15;
+    private int numberXDivisions = 15;
     private List<Double> scores;
 	
 	private ArrayList<Double> selectedXaxis = new ArrayList<Double>();
@@ -133,11 +133,6 @@ public class Scatterplot extends JPanel {
         List<Point> graphPoints = new ArrayList<>();
         System.out.println("line 134 csvBondDataList.size() : " + csvBondDataList.size());
         for (int i = 0; i < selectedXaxis.size(); i++) {
-//            int x1 = (int) (i * xScale + padding + labelPadding);
-//            int y1 = (int) ((getMaxScore() - scores.get(i)) * yScale + padding);
-            
-//        	int x1 = selectedXaxis.get(i).intValue();
-//            int y1 =selectedYaxis.get(i).intValue();
         	int x1 = (int) ((maxXaxisValue - selectedXaxis.get(i).intValue()) * xScale + padding);
             int y1 = (int) ((maxYaxisValue - selectedYaxis.get(i).intValue()) * yScale + padding);
             System.out.println("graphPoints x"+i+" : "+ x1);
@@ -156,52 +151,52 @@ public class Scatterplot extends JPanel {
             int x1 = pointWidth + padding + labelPadding;
             int y0 = getHeight() - ((i * (getHeight() - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding);
             int y1 = y0;
-            System.out.println(i + "|| x0 " + x0  + "|| x1 " +  x1  + "|| y0 " +  y0  + "|| y1 " + y1);
             if (selectedYaxis.size() > 0) {
                 g2.setColor(gridColor);
                 g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
                 g2.setColor(Color.BLACK);
-//                String yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
-                String yLabel = ((int) ((minYaxisValue + (maxYaxisValue - maxYaxisValue) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
+                String yLabel = ((int) ((minYaxisValue + (maxYaxisValue - minYaxisValue) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
                 FontMetrics metrics = g2.getFontMetrics();
                 int labelWidth = metrics.stringWidth(yLabel);
                 g2.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
-                System.out.println(yLabel + "|| x0 - labelWidth - 5 : "+(x0 - labelWidth - 5) + "|| y0 + (metrics.getHeight() / 2) - 3 : " + ( y0 + (metrics.getHeight() / 2) - 3)+"\n");
             }
             g2.drawLine(x0, y0, x1, y1);
         }
         
         
         // and for x axis
-        for (int i = 0; i < numberXDivisions + 1; i++) {
-        	int x0 = i * (getWidth() - padding * 2 - labelPadding) / (selectedXaxis.size() - 1) + padding + labelPadding;
+        for (int i = 0; i < numberXDivisions+1; i++) {
+//        	int x0 = i * (getWidth() - padding * 2 - labelPadding) / (selectedXaxis.size() - 1) + padding + labelPadding;
+        	int x0 = i * (getWidth() - padding * 2 - labelPadding) / (numberXDivisions - 1) + padding + labelPadding;
             int x1 = x0;
             int y0 = getHeight() - padding - labelPadding;
             int y1 = y0 - pointWidth;
+            System.out.println(i + "|| x0 " + x0  + "|| x1 " +  x1  + "|| y0 " +  y0  + "|| y1 " + y1);
         	if (selectedXaxis.size() > 0) {
         		g2.setColor(gridColor);
 //        		g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
+        		g2.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth() - padding, y1);
         		g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
         		g2.setColor(Color.BLACK);
-//                String yLabel = ((int) ((getMinScore() + (getMaxScore() - getMinScore()) * ((i * 1.0) / numberYDivisions)) * 100)) / 100.0 + "";
-        		String xLabel = ((int) ((minXaxisValue + (maxXaxisValue - maxXaxisValue) * ((i * 1.0) / numberXDivisions)) * 100)) / 100.0 + "";
+        		String xLabel = ((int) ((minXaxisValue + (maxXaxisValue - minXaxisValue) * ((i * 1.0) / numberXDivisions)) * 100)) / 100.0 + "";
         		FontMetrics metrics = g2.getFontMetrics();
         		int labelWidth = metrics.stringWidth(xLabel);
 //        		g2.drawString(xLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight() / 2) - 3);
         		g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
+        		System.out.println("yLabel : " + xLabel + "|| x0 - labelWidth - 5 : "+(x0 - labelWidth - 5) + "|| y0 + (metrics.getHeight() / 2) - 3 : " + ( y0 + (metrics.getHeight() / 2) - 3)+"\n");
         	}
         	g2.drawLine(x0, y0, x1, y1);
         }
 
-        /*
-        // and for x axis
-        for (int i = 0; i < scores.size(); i++) {
-            if (scores.size() > 1) {
-                int x0 = i * (getWidth() - padding * 2 - labelPadding) / (scores.size() - 1) + padding + labelPadding;
+        
+/*        // and for x axis
+        for (int i = 0; i < numberXDivisions; i++) {
+            if (selectedXaxis.size() > 1) {
+                int x0 = i * (getWidth() - padding * 2 - labelPadding) / (selectedXaxis.size() - 1) + padding + labelPadding;
                 int x1 = x0;
                 int y0 = getHeight() - padding - labelPadding;
                 int y1 = y0 - pointWidth;
-                if ((i % ((int) ((scores.size() / 20.0)) + 1)) == 0) {
+                if ((i % ((int) ((selectedXaxis.size() / 20.0)) + 1)) == 0) {
                     g2.setColor(gridColor);
                     g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
                     g2.setColor(Color.BLACK);
@@ -245,25 +240,6 @@ public class Scatterplot extends JPanel {
     	return minValue;
     }
     
-    private int getXaxisMaxValue() {
-    	return maxXaxisValue;
-    	//return (int)getMaxValue(selectedXaxis);
-    }
-    
-    private int getXaxisMinValue() {
-    	return minXaxisValue;
-    	//return (int)getMinValue(selectedXaxis);
-    }
-    
-    private int getYaxisMaxValue() {
-    	return maxYaxisValue;
-    	//return (int)getMaxValue(selectedYaxis);
-    }
-    
-    private int getYaxisMinValue() {
-    	return minYaxisValue;
-//    	return (int)getMinValue(selectedYaxis);
-    }
 
     
     
